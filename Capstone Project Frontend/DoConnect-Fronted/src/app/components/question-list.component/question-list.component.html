@@ -1,0 +1,202 @@
+<div class="questions-container">
+  <div class="questions-header">
+    <h2 class="questions-title">
+      <i class="icon-questions"></i>
+      Community Questions
+    </h2>
+    <p class="questions-subtitle">
+      Explore questions from the community and share your knowledge
+    </p>
+  </div>
+
+  <!-- Questions List -->
+  <div class="questions-list" *ngIf="questions.length > 0; else noQuestions">
+    <div *ngFor="let q of questions; let i = index" class="question-card">
+
+      <!-- EDIT MODE -->
+      <div *ngIf="isEditMode(q) && editingQuestion" class="edit-mode">
+        <div class="form-group">
+          <label class="form-label">Edit Question</label>
+          <textarea
+            [(ngModel)]="editingQuestion.questionText"
+            placeholder="Edit your question"
+            class="form-textarea"
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="edit-actions">
+          <button (click)="saveEditedQuestion()" class="btn btn-success btn-sm">
+            <i class="icon-save"></i>
+            Save
+          </button>
+          <button (click)="cancelEdit()" class="btn btn-secondary btn-sm">
+            <i class="icon-cancel"></i>
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- NORMAL VIEW MODE -->
+      <div *ngIf="!isEditMode(q)" class="question-content">
+        <!-- Question Header -->
+        <div class="question-header">
+          <h3 class="question-text">{{ q.questionText }}</h3>
+          <div class="question-meta">
+            <span class="badge" [ngClass]="getStatusBadgeClass(q.status)">
+              {{ q.status | titlecase }}
+            </span>
+            <span class="question-id text-muted">
+              Question #{{ q.questionId }}
+            </span>
+          </div>
+        </div>
+
+        <!-- QUESTION IMAGES DISPLAY -->
+        <div class="question-images" *ngIf="q.images && q.images.length > 0">
+          <h4 class="images-title">
+            <i class="icon-images"></i>
+            Attached Images
+          </h4>
+          <div class="images-gallery">
+            <div *ngFor="let img of q.images" class="image-item">
+              <img [src]=" 'http://localhost:5193' + img.imagePath"
+                   [alt]="'Question image ' + img.imageId"
+                   class="question-image"
+                   loading="lazy" />
+              <div class="image-overlay">
+                <button class="image-view-btn" (click)="viewImage(img.imagePath)">
+                  <i class="icon-view"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMAGE UPLOAD FOR ADMIN OR EDIT MODE -->
+        <div class="image-upload-section" *ngIf="isAdmin() || isEditMode(q)">
+          <div class="upload-header">
+            <h5 class="upload-title">
+              <i class="icon-upload"></i>
+              Add Image
+            </h5>
+          </div>
+          <div class="upload-area">
+            <input
+              type="file"
+              (change)="onFileSelected($event, q.questionId)"
+              accept="image/*"
+              class="file-input"
+              id="file-input-{{q.questionId}}"
+            />
+            <label for="file-input-{{q.questionId }}" class="file-label">
+              <i class="icon-file"></i>
+              <span class="file-text">Choose Image</span>
+            </label>
+            <button
+              (click)="uploadImage(q.questionId)"
+              [disabled]="!selectedFile || uploadInProgress"
+              class="btn btn-primary btn-sm upload-btn"
+            >
+              <span *ngIf="uploadInProgress && uploadingForQuestionId === q.questionId" class="upload-spinner"></span>
+              <i *ngIf="!(uploadInProgress && uploadingForQuestionId === q.questionId)" class="icon-upload"></i>
+              {{(uploadInProgress && uploadingForQuestionId === q.questionId) ? 'Uploading...' : 'Upload' }}
+            </button>
+          </div>
+          <div class="upload-info">
+            <small class="upload-help">
+              Supported formats: JPG, PNG, GIF. Max size: 5MB
+            </small>
+          </div>
+        </div>
+
+        <!-- Answer Submit Form -->
+        <div class="answer-section">
+          <form class="answer-form" (ngSubmit)="submitAnswer(q.questionId)">
+            <div class="form-group">
+              <label class="form-label">Your Answer</label>
+              <div class="answer-input-group">
+                <textarea
+                  [(ngModel)]="answers[q.questionId]"
+                  name="answerText{{q.questionId}}"
+                  placeholder="Share your knowledge..."
+                  required
+                  class="form-textarea"
+                  rows="2"
+                ></textarea>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="icon-send"></i>
+                  Submit Answer
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Answers List -->
+          <div class="answers-section" *ngIf="questionAnswers[q.questionId].length > 0">
+            <h4 class="answers-title">
+              <i class="icon-answers"></i>
+              Answers ({{ questionAnswers[q.questionId].length }})
+            </h4>
+            <div class="answers-list">
+              <div *ngFor="let ans of questionAnswers[q.questionId]" class="answer-item">
+                <div class="answer-content">
+                  <i class="icon-answer"></i>
+                  {{ ans.answerText }}
+                </div>
+                <div class="answer-meta">
+                  <span class="answer-timestamp text-muted">
+                    Answer #{{ ans.answerId || 'N/A' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="question-actions">
+          <!-- Admin Actions -->
+          <div class="admin-actions" *ngIf="isAdmin() && q.status === 'pending'">
+            <button (click)="approveQuestion(q.questionId)" class="btn btn-success btn-sm">
+              <i class="icon-approve"></i>
+              Approve
+            </button>
+            <button (click)="rejectQuestion(q.questionId)" class="btn btn-danger btn-sm">
+              <i class="icon-reject"></i>
+              Reject
+            </button>
+          </div>
+
+          <!-- User Actions -->
+          <div class="user-actions">
+            <button *ngIf="!isEditMode(q)" (click)="editQuestion(q)" class="btn btn-outline btn-sm">
+              <i class="icon-edit"></i>
+              Edit
+            </button>
+            <button *ngIf="isAdmin()" (click)="deleteQuestion(q.questionId)" class="btn btn-danger btn-sm">
+              <i class="icon-delete"></i>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Questions State -->
+  <ng-template #noQuestions>
+    <div class="no-questions">
+      <div class="no-questions-icon">
+        <i class="icon-empty"></i>
+      </div>
+      <h3 class="no-questions-title">No Questions Yet</h3>
+      <p class="no-questions-text">
+        Be the first to ask a question and start the conversation!
+      </p>
+      <a routerLink="/question-form" class="btn btn-primary">
+        <i class="icon-add"></i>
+        Ask a Question
+      </a>
+    </div>
+  </ng-template>
+</div>

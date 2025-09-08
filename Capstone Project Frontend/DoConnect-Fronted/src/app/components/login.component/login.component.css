@@ -1,0 +1,95 @@
+/* Login Component Styles */
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  padding: var(--spacing-4);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
+}
+
+.login-form {
+  margin-top: var(--spacing-6);
+}
+
+.login-footer {
+  border-top: 1px solid var(--gray-200);
+  padding-top: var(--spacing-6);
+  margin-top: var(--spacing-6);
+}
+
+/* Icon styles */
+.icon-user::before { content: "👤"; margin-right: 0.5rem; }
+.icon-lock::before { content: "🔒"; margin-right: 0.5rem; }
+.icon-warning::before { content: "⚠️"; margin-right: 0.5rem; }
+
+/* Form input error state */
+.form-input.error {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 3px rgb(239 68 68 / 0.1);
+}
+
+/* Full width utility */
+.w-full {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    padding: var(--spacing-2);
+  }
+
+  .login-card {
+    padding: var(--spacing-4);
+  }
+
+  .card-header {
+    padding-bottom: var(--spacing-3);
+  }
+}
+
+/* Loading state */
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Focus improvements */
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+}
+
+/* Hover effects */
+.login-card:hover {
+  box-shadow: var(--shadow-2xl);
+  transform: translateY(-2px);
+  transition: all var(--transition-normal);
+}
+
+/* Animation for error messages */
+.form-error {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

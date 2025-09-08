@@ -1,0 +1,127 @@
+<div class="question-form-container">
+  <div class="card question-form-card">
+    <div class="card-header text-center">
+      <h2 class="card-title">
+        <i class="icon-question"></i>
+        Ask a Question
+      </h2>
+      <p class="card-subtitle">
+        Share your question with the community and get helpful answers
+      </p>
+    </div>
+
+    <form (ngSubmit)="createQuestion()" class="question-form" #questionForm="ngForm">
+      <!-- Question Text Field -->
+      <div class="form-group">
+        <label for="questionText" class="form-label">
+          <i class="icon-text"></i>
+          Your Question
+        </label>
+        <textarea
+          id="questionText"
+          [(ngModel)]="questionText"
+          name="questionText"
+          placeholder="What would you like to know? Be specific and clear..."
+          required
+          class="form-textarea"
+          rows="4"
+          #questionTextInput="ngModel"
+          [class.error]="questionTextInput.invalid && questionTextInput.touched"
+        ></textarea>
+        <span class="form-help">
+          Provide as much detail as possible to get better answers
+        </span>
+        <span
+          *ngIf="questionTextInput.invalid && questionTextInput.touched"
+          class="form-error"
+        >
+          Question text is required
+        </span>
+      </div>
+
+      <!-- Image Upload Section -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="icon-image"></i>
+          Attach Images (Optional)
+        </label>
+        <div class="image-upload-area">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            multiple
+            class="file-input"
+            id="question-images"
+          />
+          <label for="question-images" class="file-label">
+            <i class="icon-file"></i>
+            <span class="file-text">Choose Images</span>
+          </label>
+          <div *ngIf="selectedFiles.length > 0" class="selected-files">
+            <div *ngFor="let file of selectedFiles; let i = index" class="file-item">
+              <span class="file-name">{{ file.name }}</span>
+              <button type="button" (click)="removeFile(i)" class="remove-file-btn">
+                <i class="icon-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <span class="form-help">
+          You can attach images to help explain your question better. Supported formats: JPG, PNG, GIF. Max 5MB per image.
+        </span>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="loading || questionForm.invalid"
+        class="btn btn-primary btn-lg w-full"
+      >
+        <span *ngIf="loading" class="spinner"></span>
+        <span *ngIf="!loading">
+          <i class="icon-submit"></i>
+          Submit Question
+        </span>
+        <span *ngIf="loading">Submitting...</span>
+      </button>
+
+      <!-- Success Message -->
+      <div *ngIf="submitted && !errorMsg" class="alert alert-success mt-4">
+        <i class="icon-success"></i>
+        Question submitted successfully! It will be reviewed by moderators.
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMsg" class="alert alert-error mt-4">
+        <i class="icon-warning"></i>
+        {{ errorMsg }}
+      </div>
+    </form>
+
+    <!-- Guidelines -->
+    <div class="question-guidelines mt-6">
+      <h4 class="guidelines-title">
+        <i class="icon-info"></i>
+        Question Guidelines
+      </h4>
+      <ul class="guidelines-list">
+        <li>Be specific and clear in your question</li>
+        <li>Provide context and background information</li>
+        <li>Use proper grammar and spelling</li>
+        <li>Search existing questions before posting</li>
+        <li>Be respectful and constructive</li>
+      </ul>
+    </div>
+
+    <!-- Navigation -->
+    <div class="form-footer text-center mt-6">
+      <p class="text-muted">
+        Want to browse existing questions?
+        <a routerLink="/questions" class="text-primary font-medium">
+          View all questions
+        </a>
+      </p>
+    </div>
+  </div>
+</div>

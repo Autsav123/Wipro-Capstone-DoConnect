@@ -1,0 +1,310 @@
+<div class="admin-dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <i class="icon-dashboard"></i>
+        Admin Dashboard
+      </h1>
+      <p class="dashboard-subtitle">
+        Manage your DoConnect community with powerful admin tools
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="isAdmin(); else notAdmin" class="dashboard-content">
+    <!-- Quick Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="icon-questions-stat"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getTotalQuestions() }}</h3>
+          <p class="stat-label">Total Questions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="icon-pending-stat"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ pendingQuestions.length }}</h3>
+          <p class="stat-label">Pending Approval</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon approved">
+          <i class="icon-approved-stat"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getApprovedQuestions() }}</h3>
+          <p class="stat-label">Approved Questions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon users">
+          <i class="icon-users-stat"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getTotalUsers() }}</h3>
+          <p class="stat-label">Total Users</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="card admin-actions-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-actions"></i>
+          Quick Admin Actions
+        </h3>
+      </div>
+
+      <div class="admin-actions-grid">
+        <a routerLink="/user-management" class="action-card">
+          <div class="action-icon">
+            <i class="icon-users"></i>
+          </div>
+          <div class="action-content">
+            <h4 class="action-title">User Management</h4>
+            <p class="action-description">Approve, reject, and manage user accounts</p>
+          </div>
+          <div class="action-arrow">
+            <i class="icon-arrow"></i>
+          </div>
+        </a>
+
+        <a routerLink="/questions" class="action-card">
+          <div class="action-icon">
+            <i class="icon-questions"></i>
+          </div>
+          <div class="action-content">
+            <h4 class="action-title">Manage Questions</h4>
+            <p class="action-description">Review, approve, and moderate questions</p>
+          </div>
+          <div class="action-arrow">
+            <i class="icon-arrow"></i>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pending Questions Card -->
+    <div class="card pending-questions-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-pending"></i>
+          Pending Questions
+          <span class="badge badge-warning">{{ pendingQuestions.length }}</span>
+        </h3>
+      </div>
+
+      <div class="pending-questions-content">
+        <div *ngIf="pendingQuestions.length > 0; else nothingPending" class="questions-list">
+          <div *ngFor="let q of pendingQuestions" class="question-item">
+            <div class="question-content">
+              <h4 class="question-text">{{ q.questionText }}</h4>
+              <div class="question-meta">
+                <span class="question-id">Question #{{ q.questionId }}</span>
+                <span class="question-status badge badge-warning">Pending</span>
+              </div>
+            </div>
+<!-- Pending Answers Card -->
+<!-- <div class="card pending-answers-card">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="icon-pending"></i>
+      Pending Answers
+      <span class="badge badge-warning">{{ pendingAnswers.length }}</span>
+    </h3>
+  </div>
+
+  <div class="pending-answers-content">
+    <div *ngIf="pendingAnswers.length > 0; else nothingPendingAnswers" class="answers-list">
+      <div *ngFor="let ans of pendingAnswers" class="answer-item">
+        <div class="answer-content">
+          <h4 class="answer-text">{{ ans.answerText }}</h4>
+          <div class="answer-meta">
+            <span class="answer-id">Answer #{{ ans.answerId }}</span>
+            <span class="answer-status badge badge-warning">Pending</span>
+          </div>
+        </div>
+
+        <div class="answer-actions">
+          <button
+            (click)="approveAnswer(ans.answerId)"
+            class="btn btn-success btn-sm"
+            [disabled]="processingAnswers?.has(ans.answerId)"
+          >
+            <i class="icon-approve"></i>
+            Approve
+          </button>
+          <button
+            (click)="rejectAnswer(ans.answerId)"
+            class="btn btn-danger btn-sm"
+            [disabled]="processingAnswers?.has(ans.answerId)"
+          >
+            <i class="icon-reject"></i>
+            Reject
+          </button>
+        </div> -->
+        <!-- Pending Answers Card -->
+<div class="card pending-answers-card">
+  <div class="card-header">
+    <h3>Pending Answers <span class="badge badge-warning">{{ pendingAnswers.length }}</span></h3>
+  </div>
+  <div class="pending-answers-content">
+    <div *ngIf="pendingAnswers.length > 0; else nothingPendingAnswers">
+      <div *ngFor="let ans of pendingAnswers" class="answer-item">
+        <div class="answer-content">
+          <div>{{ ans.answerText }}</div>
+          <span class="answer-id">Answer #{{ ans.answerId }}</span>
+          <span class="answer-status badge badge-warning">{{ ans.status }}</span>
+        </div>
+        <div class="answer-actions">
+          <button (click)="approveAnswer(ans.answerId)" [disabled]="processingAnswers.has(ans.answerId)" class="btn btn-success btn-sm">Approve</button>
+          <button (click)="rejectAnswer(ans.answerId)" [disabled]="processingAnswers.has(ans.answerId)" class="btn btn-danger btn-sm">Reject</button>
+        </div>
+        <div class="status-indicators">
+          <span *ngIf="ans.status === 'approved'" class="status-approved">Approved</span>
+          <span *ngIf="ans.status === 'rejected'" class="status-rejected">Rejected</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #nothingPendingAnswers>
+      <div>No Pending Answers</div>
+    </ng-template>
+  </div>
+</div>
+
+        <!-- Status Indicators -->
+        <!-- <div class="status-indicators">
+          <span *ngIf="ans.status === 'approved'" class="status-approved">
+            <i class="icon-check"></i>
+            Approved
+          </span>
+          <span *ngIf="ans.status === 'rejected'" class="status-rejected">
+            <i class="icon-cross"></i>
+            Rejected
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #nothingPendingAnswers>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="icon-empty"></i>
+        </div>
+        <h4 class="empty-title">No Pending Answers</h4>
+        <p class="empty-description">
+          All answers have been reviewed.
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</div> -->
+            <div class="question-actions">
+              <button
+                (click)="approveQuestion(q.questionId)"
+                class="btn btn-success btn-sm"
+                [disabled]="processingQuestions.has(q.questionId)"
+              >
+                <i class="icon-approve"></i>
+                Approve
+              </button>
+              <button
+                (click)="rejectQuestion(q.questionId)"
+                class="btn btn-danger btn-sm"
+                [disabled]="processingQuestions.has(q.questionId)"
+              >
+                <i class="icon-reject"></i>
+                Reject
+              </button>
+            </div>
+
+            <!-- Status Indicators -->
+            <div class="status-indicators">
+              <span *ngIf="q.status === 'approved'" class="status-approved">
+                <i class="icon-check"></i>
+                Approved
+              </span>
+              <span *ngIf="q.status === 'rejected'" class="status-rejected">
+                <i class="icon-cross"></i>
+                Rejected
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #nothingPending>
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="icon-empty"></i>
+            </div>
+            <h4 class="empty-title">No Pending Questions</h4>
+            <p class="empty-description">
+              All questions have been reviewed. Great job keeping the community moderated!
+            </p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- System Overview Card -->
+    <div class="card system-overview-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-system"></i>
+          System Overview
+        </h3>
+      </div>
+
+      <div class="system-overview-content">
+        <div class="overview-item">
+          <i class="icon-activity"></i>
+          <div class="overview-text">
+            <h4>Community Activity</h4>
+            <p>Monitor user engagement and question activity across the platform</p>
+          </div>
+        </div>
+
+        <div class="overview-item">
+          <i class="icon-moderation"></i>
+          <div class="overview-text">
+            <h4>Content Moderation</h4>
+            <p>Review and approve user-generated content to maintain quality standards</p>
+          </div>
+        </div>
+
+        <div class="overview-item">
+          <i class="icon-analytics"></i>
+          <div class="overview-text">
+            <h4>Analytics & Reports</h4>
+            <p>Access detailed insights about platform usage and user behavior</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #notAdmin>
+    <div class="unauthorized-access">
+      <div class="unauthorized-icon">
+        <i class="icon-unauthorized"></i>
+      </div>
+      <h2 class="unauthorized-title">Access Denied</h2>
+      <p class="unauthorized-message">
+        You don't have permission to access this page. Only administrators can view the dashboard.
+      </p>
+      <a routerLink="/questions" class="btn btn-primary">
+        <i class="icon-back"></i>
+        Back to Questions
+      </a>
+    </div>
+  </ng-template>
+</div>

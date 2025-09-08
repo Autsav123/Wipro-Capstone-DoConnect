@@ -1,0 +1,32 @@
+/* App Component Specific Styles */
+
+/* Icon placeholders - you can replace these with actual icon fonts like Font Awesome */
+.icon-connect::before { content: "🔗"; margin-right: 0.5rem; }
+.icon-questions::before { content: "❓"; margin-right: 0.5rem; }
+.icon-search::before { content: "🔍"; margin-right: 0.5rem; }
+.icon-user::before { content: "👤"; margin-right: 0.5rem; }
+.icon-dashboard::before { content: "📊"; margin-right: 0.5rem; }
+.icon-users::before { content: "👥"; margin-right: 0.5rem; }
+.icon-logout::before { content: "🚪"; margin-right: 0.5rem; }
+
+/* Main content area */
+main {
+  min-height: calc(100vh - 200px);
+}
+
+/* Footer styling */
+footer {
+  margin-top: auto;
+}
+
+/* Responsive navigation adjustments */
+@media (max-width: 767px) {
+  .navbar-brand {
+    font-size: var(--font-size-lg);
+  }
+
+  .navbar-nav .btn {
+    width: auto;
+    min-width: 80px;
+  }
+}

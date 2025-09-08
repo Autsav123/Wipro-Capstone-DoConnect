@@ -1,0 +1,179 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="header-content">
+      <div class="profile-avatar">
+        <i class="icon-user-large"></i>
+      </div>
+      <h1 class="profile-name">{{ username || 'Welcome User' }}</h1>
+      <div class="profile-role" [ngClass]="getRoleBadgeClass()">
+        {{ getUserRole() | titlecase }}
+      </div>
+      <p class="profile-subtitle">Manage your account information and preferences</p>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <!-- User Information Card -->
+    <div class="card profile-info-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-info"></i>
+          Personal Information
+        </h3>
+      </div>
+
+      <div class="profile-info">
+        <div class="info-item">
+          <label class="info-label">
+            <i class="icon-user"></i>
+            Username
+          </label>
+          <div class="info-value">
+            <strong>{{ username || 'Not available' }}</strong>
+            <small *ngIf="!username" class="text-warning">(Check console for debug info)</small>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">
+            <i class="icon-email"></i>
+            Email Address
+          </label>
+          <div class="info-value">
+            <strong>{{ email || 'Not available' }}</strong>
+            <small *ngIf="!email" class="text-warning">(Check console for debug info)</small>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">
+            <i class="icon-role"></i>
+            Account Type
+          </label>
+          <div class="info-value">
+            <span class="badge" [ngClass]="getRoleBadgeClass()">
+              {{ getUserRole() | titlecase }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">
+            <i class="icon-status"></i>
+            Account Status
+          </label>
+          <div class="info-value">
+            <span class="badge badge-success">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="card profile-actions-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-actions"></i>
+          Quick Actions
+        </h3>
+      </div>
+
+      <div class="profile-actions">
+        <a routerLink="/questions" class="action-button browse-questions">
+          <div class="action-icon-container">
+            <div class="action-icon-image">
+              <i class="icon-browse-questions"></i>
+            </div>
+          </div>
+          <div class="action-content">
+            <h4 class="action-title">Browse Questions</h4>
+            <p class="action-description">Explore community questions and answers</p>
+          </div>
+          <div class="action-arrow">
+            <i class="icon-arrow-right"></i>
+          </div>
+        </a>
+
+        <a routerLink="/question-form" class="action-button ask-question">
+          <div class="action-icon-container">
+            <div class="action-icon-image">
+              <i class="icon-ask-question"></i>
+            </div>
+          </div>
+          <div class="action-content">
+            <h4 class="action-title">Ask a Question</h4>
+            <p class="action-description">Share your question with the community</p>
+          </div>
+          <div class="action-arrow">
+            <i class="icon-arrow-right"></i>
+          </div>
+        </a>
+
+        <div *ngIf="isAdmin()" class="admin-actions">
+          <a routerLink="/admin-dashboard" class="action-button admin-action">
+            <div class="action-icon-container">
+              <div class="action-icon-image admin-icon">
+                <i class="icon-dashboard"></i>
+              </div>
+            </div>
+            <div class="action-content">
+              <h4 class="action-title">Admin Dashboard</h4>
+              <p class="action-description">Manage questions and users</p>
+            </div>
+            <div class="action-arrow">
+              <i class="icon-arrow-right"></i>
+            </div>
+          </a>
+
+          <a routerLink="/user-management" class="action-button admin-action">
+            <div class="action-icon-container">
+              <div class="action-icon-image admin-icon">
+                <i class="icon-users"></i>
+              </div>
+            </div>
+            <div class="action-content">
+              <h4 class="action-title">User Management</h4>
+              <p class="action-description">Approve and manage user accounts</p>
+            </div>
+            <div class="action-arrow">
+              <i class="icon-arrow-right"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Settings Card -->
+    <div class="card profile-settings-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-settings"></i>
+          Account Settings
+        </h3>
+      </div>
+
+      <div class="profile-settings">
+        <button class="btn btn-outline w-full" (click)="editProfile()">
+          <i class="icon-edit"></i>
+          Edit Profile
+        </button>
+
+        <button class="btn btn-outline w-full" (click)="changePassword()">
+          <i class="icon-lock"></i>
+          Change Password
+        </button>
+
+        <button class="btn btn-secondary w-full" (click)="refreshProfile()">
+          <i class="icon-refresh"></i>
+          Refresh Profile Data
+        </button>
+
+        <button class="btn btn-danger w-full" (click)="logout()">
+          <i class="icon-logout"></i>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

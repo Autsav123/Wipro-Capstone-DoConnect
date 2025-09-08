@@ -1,0 +1,77 @@
+<div class="answer-list-container">
+  <!-- Admin Debug Info -->
+  <div class="admin-debug" *ngIf="isAdmin()">
+    <strong>Admin Mode:</strong> You can approve/reject pending answers
+  </div>
+
+  <!-- Answers List -->
+  <div *ngIf="answers.length > 0; else emptyAnswers">
+    <ul>
+      <li *ngFor="let a of answers; trackBy: trackByAnswerId" [attr.data-status]="a.status">
+        <!-- Answer Content -->
+        <div class="answer-content">
+          {{ a.answerText }}
+        </div>
+
+        <!-- Status Badge -->
+        <span class="badge"
+          [ngClass]="{
+            'badge-warning': a.status === 'pending',
+            'badge-success': a.status === 'approved',
+            'badge-danger': a.status === 'rejected'
+          }">
+          {{ a.status | titlecase }}
+        </span>
+
+        <!-- Admin Actions -->
+        <div class="admin-actions" *ngIf="isAdmin()">
+          <!-- Approve/Reject for pending answers -->
+          <ng-container *ngIf="a.status === 'pending'">
+            <button
+              (click)="approveAnswer(a.answerId)"
+              class="btn btn-success btn-sm"
+              [disabled]="processingAnswers.has(a.answerId)"
+              title="Approve this answer"
+            >
+              <span *ngIf="!processingAnswers.has(a.answerId)">Approve</span>
+              <span *ngIf="processingAnswers.has(a.answerId)">Processing...</span>
+            </button>
+            <button
+              (click)="rejectAnswer(a.answerId)"
+              class="btn btn-danger btn-sm"
+              [disabled]="processingAnswers.has(a.answerId)"
+              title="Reject this answer"
+            >
+              <span *ngIf="!processingAnswers.has(a.answerId)">Reject</span>
+              <span *ngIf="processingAnswers.has(a.answerId)">Processing...</span>
+            </button>
+          </ng-container>
+
+          <!-- Edit/Delete for all answers -->
+          <button
+            (click)="editAnswer(a)"
+            class="btn btn-outline btn-sm"
+            title="Edit this answer"
+          >
+            Edit
+          </button>
+          <button
+            (click)="deleteAnswer(a.answerId!)"
+            class="btn btn-danger btn-sm"
+            title="Delete this answer"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #emptyAnswers>
+    <div class="empty-answers">
+      <h4>No answers yet</h4>
+      <p>Be the first to answer this question!</p>
+    </div>
+  </ng-template>
+</div>

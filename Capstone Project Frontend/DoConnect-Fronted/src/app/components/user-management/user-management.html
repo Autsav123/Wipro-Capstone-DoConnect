@@ -1,0 +1,192 @@
+<div class="user-management-container">
+  <div class="management-header">
+    <div class="header-content">
+      <h1 class="management-title">
+        <i class="icon-users"></i>
+        User Management
+      </h1>
+      <p class="management-subtitle">
+        Manage user accounts, approvals, and permissions
+      </p>
+    </div>
+  </div>
+
+  <div class="management-content">
+    <!-- User Statistics -->
+    <div class="user-stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="icon-total-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ users.length }}</h3>
+          <p class="stat-label">Total Users</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="icon-pending-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getPendingUsers() }}</h3>
+          <p class="stat-label">Pending Approval</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon approved">
+          <i class="icon-approved-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getApprovedUsers() }}</h3>
+          <p class="stat-label">Approved Users</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon rejected">
+          <i class="icon-rejected-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-number">{{ getRejectedUsers() }}</h3>
+          <p class="stat-label">Rejected Users</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users List -->
+    <div class="card users-list-card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-list"></i>
+          All Users
+        </h3>
+        <div class="header-actions">
+          <div class="filter-controls">
+            <select [(ngModel)]="selectedFilter" (change)="filterUsers()" class="form-select">
+              <option value="all">All Users</option>
+              <option value="pending">Pending Approval</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="users-list" *ngIf="filteredUsers.length > 0; else noUsers">
+        <div *ngFor="let u of filteredUsers" class="user-item">
+          <div class="user-avatar">
+            <i class="icon-user"></i>
+          </div>
+
+          <div class="user-info">
+            <h4 class="user-name">{{ u.username }}</h4>
+            <p class="user-email">{{ u.email }}</p>
+            <div class="user-meta">
+              <span class="user-id">ID: {{ u.id }}</span>
+              <span class="user-role badge badge-secondary">{{ u.role || 'User' }}</span>
+            </div>
+          </div>
+
+          <div class="user-status">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(u.status)">
+              {{ getStatusText(u.status) }}
+            </span>
+          </div>
+
+          <div class="user-actions">
+            <div *ngIf="u.status !== 'approved' && u.status !== 'rejected'" class="pending-actions">
+              <button
+                (click)="approveUser(u.id)"
+                class="btn btn-success btn-sm"
+                [disabled]="processingUsers.has(u.id)"
+              >
+                <i class="icon-approve"></i>
+                Approve
+              </button>
+              <button
+                (click)="rejectUser(u.id)"
+                class="btn btn-danger btn-sm"
+                [disabled]="processingUsers.has(u.id)"
+              >
+                <i class="icon-reject"></i>
+                Reject
+              </button>
+            </div>
+
+            <div *ngIf="u.status === 'approved' || u.status === 'rejected'" class="status-actions">
+              <button
+                *ngIf="u.status === 'rejected'"
+                (click)="approveUser(u.id)"
+                class="btn btn-outline btn-sm"
+                [disabled]="processingUsers.has(u.id)"
+              >
+                <i class="icon-reactivate"></i>
+                Reactivate
+              </button>
+              <button
+                *ngIf="u.status === 'approved'"
+                (click)="rejectUser(u.id)"
+                class="btn btn-outline btn-sm"
+                [disabled]="processingUsers.has(u.id)"
+              >
+                <i class="icon-suspend"></i>
+                Suspend
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noUsers>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="icon-empty-users"></i>
+          </div>
+          <h4 class="empty-title">No Users Found</h4>
+          <p class="empty-description">
+            No users match the current filter criteria.
+          </p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="card bulk-actions-card" *ngIf="selectedUsers.length > 0">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="icon-bulk"></i>
+          Bulk Actions
+          <span class="badge badge-primary">{{ selectedUsers.length }} selected</span>
+        </h3>
+      </div>
+
+      <div class="bulk-actions">
+        <button
+          (click)="bulkApprove()"
+          class="btn btn-success"
+          [disabled]="bulkProcessing"
+        >
+          <i class="icon-bulk-approve"></i>
+          Approve Selected
+        </button>
+        <button
+          (click)="bulkReject()"
+          class="btn btn-danger"
+          [disabled]="bulkProcessing"
+        >
+          <i class="icon-bulk-reject"></i>
+          Reject Selected
+        </button>
+        <button
+          (click)="clearSelection()"
+          class="btn btn-secondary"
+        >
+          <i class="icon-clear"></i>
+          Clear Selection
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

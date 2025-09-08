@@ -1,0 +1,5 @@
+<form (submit)="submitAnswer(); $event.preventDefault()">
+  <textarea [(ngModel)]="answerText" name="answerText" required placeholder="Your answer here..."></textarea>
+  <button type="submit">Submit Answer</button>
+</form>
+<div *ngIf="submitted">Answer submitted successfully!</div>

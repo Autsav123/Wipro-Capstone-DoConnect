@@ -1,0 +1,67 @@
+<!-- DoConnect Application Header -->
+<header class="navbar">
+  <div class="navbar-container">
+    <!-- Brand/Logo -->
+    <a routerLink="/" class="navbar-brand">
+      <i class="icon-connect"></i>
+      DoConnect
+    </a>
+
+    <!-- Navigation Menu -->
+    <nav class="navbar-nav">
+      <a routerLink="/questions" routerLinkActive="active" class="navbar-link">
+        <i class="icon-questions"></i>
+        Questions
+      </a>
+
+      <a routerLink="/search" routerLinkActive="active" class="navbar-link">
+        <i class="icon-search"></i>
+        Search
+      </a>
+
+      <a routerLink="/profile" routerLinkActive="active" class="navbar-link">
+        <i class="icon-user"></i>
+        Profile
+      </a>
+
+      <!-- Admin-only links -->
+      <a *ngIf="isAdmin()" routerLink="/admin-dashboard" routerLinkActive="active" class="navbar-link">
+        <i class="icon-dashboard"></i>
+        Dashboard
+      </a>
+
+      <a *ngIf="isAdmin()" routerLink="/user-management" routerLinkActive="active" class="navbar-link">
+        <i class="icon-users"></i>
+        Users
+      </a>
+
+      <!-- Authentication Links -->
+      <div class="flex gap-2">
+        <a *ngIf="!isLoggedIn()" routerLink="/login" routerLinkActive="active" class="btn btn-outline btn-sm">
+          Login
+        </a>
+        <a *ngIf="!isLoggedIn()" routerLink="/register" routerLinkActive="active" class="btn btn-primary btn-sm">
+          Register
+        </a>
+        <button *ngIf="isLoggedIn()" (click)="logout()" class="btn btn-secondary btn-sm">
+          <i class="icon-logout"></i>
+          Logout
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Main Content Area -->
+<main class="container mt-6">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer -->
+<footer class="bg-light mt-16 p-6">
+  <div class="container text-center">
+    <p class="text-muted mb-0">
+      &copy; 2024 DoConnect. Built with Angular and modern web technologies.
+    </p>
+  </div>
+</footer>
