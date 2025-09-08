@@ -29,7 +29,6 @@ builder.Services.AddEndpointsApiExplorer();
 var jwtKey = "ThisIsMyUltraSuperStrongJWTKey_2025@#321!";
 builder.Services.AddSwaggerGen(c =>
 {
-    // Yahan se neeche ka block paste karo
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer 12345abcdef'",
@@ -80,18 +79,17 @@ else
 }
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // For serving wwwroot files (css, js etc.)
+app.UseStaticFiles(); 
 
 app.UseRouting();
 
-// If you add authentication/authorization later
-// app.UseAuthentication();
+
 app.UseAuthorization();
 
-// Enables classic MVC and also API attribute routes
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// *** Do NOT call app.Run() multiple times! ***
+
 app.Run();

@@ -49,7 +49,7 @@ namespace DoConnect.Controllers.Api
                 if (user == null) return NotFound();
 
                 user.Username = newUser.Username;
-                user.Password = newUser.Password; // Real prod app: password update alag karo!
+                user.Password = newUser.Password;
                 user.Role = newUser.Role;
 
                 _context.SaveChanges();

@@ -70,28 +70,14 @@ namespace DoConnect.Controllers.Api
         }
         //[Authorize(Roles = "Admin")]
         [HttpPost("soft-delete/{id}")]
-        // 
-        // public IActionResult Delete(int id)
-        // {
-        //     try
-        //     {
-        //         var question = _context.Questions.Find(id);
-        //         if (question == null) return NotFound();
-        //         _context.Questions.Update(question);
-        //         _context.SaveChanges();
-        //         return Ok(new { message = "Question deleted" });
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, "Internal server error" + ex.Message);
-        //     }
-        // }
+        
+        
         public IActionResult SoftDelete(int id)
         {
             
                 var question = _context.Questions.Find(id);
                 if (question == null) return NotFound();
-                question.Status = "deleted"; // or any other status indicating deletion
+                question.Status = "deleted"; 
                 
                 _context.SaveChanges();
                 return Ok(new { message = "Question deleted" });
@@ -174,7 +160,7 @@ public IActionResult AddQuestion([FromBody] Question q)
 {
     if (!ModelState.IsValid) return BadRequest(ModelState);
 
-    q.Status = "pending"; // by default har new question pending hoga
+    q.Status = "pending"; 
     _context.Questions.Add(q);
     _context.SaveChanges();
    return Ok(q);
@@ -190,7 +176,7 @@ public IActionResult AddAnswer(int questionId, [FromBody] Answer answer)
 
     answer.QuestionId = questionId;
     _context.Answers.Add(answer);
-    question.Answers.Add(answer); // if answers are navigation property
+    question.Answers.Add(answer); 
     _context.SaveChanges();
     return Ok(new { message = "Answer added" });
 }

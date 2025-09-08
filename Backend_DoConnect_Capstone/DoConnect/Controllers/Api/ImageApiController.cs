@@ -50,7 +50,7 @@ namespace DoConnect.Controllers.Api
             return Ok(new { image.ImageId, image.ImagePath });
         }
 
-        // Optional: GET all images for a question (for display)
+        
         [HttpGet("byquestion/{questionId}")]
         public IActionResult GetImagesForQuestion(int questionId)
         {
